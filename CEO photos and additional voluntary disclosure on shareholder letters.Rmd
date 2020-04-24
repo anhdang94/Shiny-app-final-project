@@ -12,56 +12,114 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### What is a shareholder letter? 
 Shareholder letters are letters composed by the CEOs or Chairs of the board. The letters are normally attached to the Annual financial reports and delivered to the shareholder every year-end.
-Although the shareholder letter is an important chanel for CEOs to communicate with the company investors, this important piece of document is not required to be filed to the SEC.
+Although the shareholder letter is an important chanel for CEOs to communicate with the company investors, this important piece of document is not required to be filed with the SEC.Since the letter is composed by the top executives themselves, it could reflect many insights about the firm past operation or the CEO’s projection of the future for the firms.
 
-+The letter can be very short and act like an invitation for shareholders to come to the annual shareholder meetings.
- This is an example of a [very short shareholders letter](https://shiny.rstudio.com/gallery/)
+* The letter can be very short and act like an invitation for shareholders to come to the annual shareholder meetings.
+  + This is an example of a [very short shareholders letter](https://github.com/anhdang94/Shiny-app-final-project/blob/master/Examples/Chase%20shareholders%20letter.png) from JP Morgan Chase.
  
- 
-+The letter can also be very long and full of additional financial information to either summarizing prior year performance or promising future performance.
-
-Since the letter is composed by the top executives themselves, it could reflect many insights information about the firm past operation or the CEO’s projection of the future of the firms.
+* The letter can also be very long and full of additional financial information to either summarizing prior year performance or promising future performance.
+  + This is an example of a [very elaborated shareholders letter](https://github.com/anhdang94/Shiny-app-final-project/blob/master/Examples/Delta%20Airline%20shareholders%20letter.png) from Delta Airline
 
 
+As you can see in the two very opposite examples above, the letter from Chase's CEO is quite "bare" and contain no valuable information at all. In opposite the letter from Delta's CEO are very meticulous and full of financial information. Delta's letter also have a nice photo of their CEO attached.
 
+
+
+### Question to consider
+*  __Why are there companies ,like Delta Airline, who try to include so much financial info and even a photo of their CEO into the shareholder letters?__  Notice that all of the financial info is reported officially in the annual reports (10-K) already. 
+
+
+*  __Why are there companies, such as Chase, who discuss no finanacial info and attach no CEO photos at all?__  
+
+Combine the two questions above, we have a more general research question as follow:
+
+*__Why do companies include their CEO photos and other financial information within their shareholder letters?__*
+
+
+
+### Theories
+
+* Photos can promote trustworthiness and transparency
+
+* Additional financial/operational information can highlight important past year good accomplishment and strengthen investors trust in firm’s performance
+
+* Additional information can also soften bad impression of investors about prior year poor performance through positive future forecast.
+
+* Since the shareholder letter is brief and normally attached at top of financial reports, it act as the tool for executives can use to create the first impression with shareholders
+
+* Main hypothesis: __A firm’s decision to include executive photos and additional information in the shareholder letters is influenced by its current financial status.__
+
+
+
+### Initial observation
+As seen in the boxplots below, when the financial performance of the firm is good (which is indicated by higher Net Income, higher Revenue, etc.), the CEO is more likely to include his photos or additional financial information with in the shareholder letter. 
+
+We can have a feeling now that the CEOs do not just simply include his photos and other financial information just for asthetic purpose.
+
+
+
+```{r shletters, echo=FALSE}
+#Load the Library
+library(shiny)
+library(ggplot2)
+library(tidyverse)
+library(RCurl)
+
+load(url("https://raw.githubusercontent.com/anhdang94/Shiny-app-final-project/master/Sharehoders_letter_part1.RData"))
+
+# Define UI for application 
+ui <- fluidPage(
   
-
-```{r eruptions, echo=FALSE}
-inputPanel(
-  selectInput("n_breaks", label = "Number of bins:",
-              choices = c(10, 20, 35, 50), selected = 20),
+  # Application title
+  titlePanel("Different financial statements elements interaction with shareholder letter elements"),
   
-  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
-              min = 0.2, max = 2, value = 1, step = 0.2)
-)
+  # Sidebar layout
+  sidebarLayout(
+    #Inputs: Select which inputs from the data we want to display
+    sidebarPanel(
+      #Select variable for y-axis
+      selectInput(inputId = "y", 
+                  label = "Element of financial statements",
+                  choices = c("Net_Income","Revenue","Year_end_stock_price","EPS"), 
+                  selected = "Net_Income"),
+      #Select X-axix variables
+      selectInput(inputId = "x", 
+                  label = "Element of shareholder letters:",
+                  choices = c("Shareholders_Letter", "CEO_photo", "Other_Financial_info"), 
+                  selected = "Shareholders_Letter"),
 
-renderPlot({
-  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
-       xlab = "Duration (minutes)", main = "Geyser eruption duration")
-  
-  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
-})
-```
-
-## Embedded Application
-
-It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
-
-```{r tabsets, echo=FALSE}
-shinyAppDir(
-  system.file("examples/06_tabsets", package = "shiny"),
-  options = list(
-    width = "100%", height = 550
+    ),
+    
+    #Output: Type of plot
+    mainPanel(
+      plotOutput(outputId = "ScatterPlot") 
+    )
   )
 )
+
+# Define server logic required to draw a scatter plot
+server <- function(input, output) {
+  
+  output$ScatterPlot <- renderPlot({
+    # draw the scatter plot
+    ggplot(shletter, aes_string(x=input$x, y=input$y,color=input$x)) + geom_boxplot() #Notice the difference between the ggplots
+  })
+}
+# Run the application 
+shinyApp(ui = ui, server = server)
+
 ```
 
-Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
 
-You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+### Regression
 
-In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+```{r regression, echo=FALSE}
+
+
+```
+
+
 
 
 
