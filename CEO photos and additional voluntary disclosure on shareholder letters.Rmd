@@ -1,0 +1,67 @@
+---
+title: "CEOs Photos and other Voluntary Disclosure on Shareholder letters"
+author: "Anh Dang"
+date: "4/24/2020"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### What is a shareholder letter? 
+Shareholder letters are letters composed by the CEOs or Chairs of the board. The letters are normally attached to the Annual financial reports and delivered to the shareholder every year-end.
+Although the shareholder letter is an important chanel for CEOs to communicate with the company investors, this important piece of document is not required to be filed to the SEC.
+
++The letter can be very short and act like an invitation for shareholders to come to the annual shareholder meetings.
+ This is an example of a [very short shareholders letter](https://shiny.rstudio.com/gallery/)
+ 
+ 
++The letter can also be very long and full of additional financial information to either summarizing prior year performance or promising future performance.
+
+Since the letter is composed by the top executives themselves, it could reflect many insights information about the firm past operation or the CEO’s projection of the future of the firms.
+
+
+
+  
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+
