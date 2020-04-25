@@ -111,15 +111,34 @@ shinyApp(ui = ui, server = server)
 ```
 
 
+
 ### Regression
+To make sure our initial observation is correct, let's check with the computer to see if our observation is still hold.
+Our regression will take the form of: 
+
+*Elements_of_Shareholder_letters = alpha + Beta X Elements_of_financial_statements + Error*
 
 
-```{r regression, echo=FALSE}
+If *__Beta__* is significant => we can conclude that our main hypothesis is correct!
 
+Since our Dependent variable will take value of either 0 or 1, the most appropriate regression model to choose in our case is __Logistic regression__.
+
+
+```{r regression, echo=TRUE}
+
+
+load(url("https://raw.githubusercontent.com/anhdang94/Shiny-app-final-project/master/Sharehoders_letter_part1.RData"))
+
+logistic1<- glm(CEO_photo ~ Net_Income, shletter, family=binomial)
+
+summary(logistic1)
 
 ```
 
+The __p-value of Net_Income is *0.0257*__, which is smaller than the normal cutoff point of pvalue=0.05.Great! 
 
+We can now conclude that the Net Income of the firm can positively impact the CEO decision to attach his photo into the shareholder letters! This also means that our original hypothesis is partially correct!
 
+We then can continue to run all other regressionss (CEO_photo ~ Revenue, CEO_photo ~ EPS, Other_Financial_info ~ Net_income, and such) simiarly to solidify our findings.
 
 
